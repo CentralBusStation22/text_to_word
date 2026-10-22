@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="מדביקים טקסט, יוצרים מסמך Word ומורידים אותו — פשוט, מהיר ופרטי."
+    />
+    <meta name="theme-color" content="#f7f8fc" />
+    <title>מילה — טקסט לקובץ Word</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="מילה — לעמוד הראשי">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M9 5.5h9l6 6V26a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 8 26V7a1.5 1.5 0 0 1 1-1.5Z" fill="currentColor" opacity=".18" />
+              <path d="M18 5.5v6h6M12 16h8M12 20h8M12 24h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span>מילה</span>
+        </a>
+        <span class="topbar-note"><span class="status-dot"></span> חינמי · ללא הרשמה</span>
+      </header>
+
+      <main class="main-content">
+        <section class="intro" aria-labelledby="page-title">
+          <span class="eyebrow"><span class="eyebrow-line"></span> מטקסט למסמך, ברגע</span>
+          <h1 id="page-title">המילים שלך.<br /><span>בקובץ Word.</span></h1>
+          <p>מדביקים את הטקסט, נותנים שם לקובץ — ומורידים מסמך מוכן. פשוט ככה.</p>
+        </section>
+
+        <section class="workspace" aria-label="יצירת מסמך Word">
+          <form id="document-form" class="editor-card">
+            <div class="card-heading">
+              <div>
+                <span class="step-label">שלב 01</span>
+                <h2>הטקסט שלך</h2>
+              </div>
+              <span class="file-type"><span class="word-icon">W</span> מסמך Word</span>
+            </div>
+
+            <label class="sr-only" for="text-input">הדביקו או כתבו כאן את הטקסט</label>
+            <textarea
+              id="text-input"
+              name="text"
+              placeholder="הדביקו את הטקסט כאן...&#10;&#10;כותרת: הכותרת שלכם&#10;תוכן: התוכן שלכם"
+              spellcheck="false"
+              dir="auto"
+              required
+            ></textarea>
+
+            <div class="editor-footer">
+              <span id="text-stats" aria-live="polite">0 מילים · 0 תווים</span>
+              <button id="clear-button" class="text-button" type="button" disabled>ניקוי הטקסט</button>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="file-name-row">
+              <label for="file-name">שם הקובץ</label>
+              <div class="file-name-input">
+                <input id="file-name" name="fileName" type="text" value="המסמך שלי" maxlength="80" />
+                <span>.docx</span>
+              </div>
+            </div>
+
+            <button id="download-button" class="download-button" type="submit" disabled>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M10 2.75v9.5m0 0 3.5-3.5M10 12.25l-3.5-3.5M3.25 13v2.25c0 .83.67 1.5 1.5 1.5h10.5c.83 0 1.5-.67 1.5-1.5V13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span class="download-label">הורדת קובץ Word</span>
+              <span class="button-arrow" aria-hidden="true">←</span>
+            </button>
+            <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <aside class="info-column" aria-label="פרטים נוספים">
+            <div class="steps-card">
+              <span class="side-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M8 5.5h10.5A1.5 1.5 0 0 1 20 7v13H8a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M6 8H4.75A1.75 1.75 0 0 0 3 9.75v8.5A1.75 1.75 0 0 0 4.75 20H8M10 10h6M10 13h6M10 16h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h2>איך זה עובד?</h2>
+              <ol>
+                <li><span>1</span> מדביקים או כותבים את הטקסט</li>
+                <li><span>2</span> בוחרים שם למסמך</li>
+                <li><span>3</span> מורידים ופותחים ב-Word</li>
+              </ol>
+            </div>
+
+            <div class="privacy-card">
+              <span class="privacy-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2.5 4 5v4.2c0 4 2.55 6.7 6 8.3 3.45-1.6 6-4.3 6-8.3V5l-6-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                  <path d="m7.5 10 1.7 1.7 3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h2>הטקסט נשאר אצלך</h2>
+                <p>המסמך נוצר ישירות בדפדפן שלך. שום דבר לא נשלח לשרת.</p>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <footer class="page-footer">
+          <span>נוצר בשביל המילים שלך</span>
+          <span class="footer-sparkle" aria-hidden="true">✳</span>
+          <span>פשוט. מהיר. שלך.</span>
+        </footer>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
