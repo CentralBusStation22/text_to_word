@@ -23,15 +23,24 @@ if (
   throw new Error("One or more document editor elements could not be found.");
 }
 
+const editorForm = form;
+const editorTextInput = textInput;
+const editorFileNameInput = fileNameInput;
+const editorStats = stats;
+const editorClearButton = clearButton;
+const editorDownloadButton = downloadButton;
+const editorDownloadLabel = downloadLabel;
+const editorFormStatus = formStatus;
+
 function updateEditorState(): void {
-  const text = textInput.value;
+  const text = editorTextInput.value;
   const words = text.trim() ? text.trim().split(/\s+/u).length : 0;
   const characters = [...text].length;
 
-  stats.textContent = `${words} ${words === 1 ? "מילה" : "מילים"} · ${characters} תווים`;
-  clearButton.disabled = text.length === 0;
-  downloadButton.disabled = text.trim().length === 0;
-  formStatus.textContent = "";
+  editorStats.textContent = `${words} ${words === 1 ? "מילה" : "מילים"} · ${characters} תווים`;
+  editorClearButton.disabled = text.length === 0;
+  editorDownloadButton.disabled = text.trim().length === 0;
+  editorFormStatus.textContent = "";
 }
 
 function getSafeFileName(value: string): string {
@@ -87,34 +96,34 @@ function cleanContent(content: string): string {
   return content.replace(/@\d+/gu, "");
 }
 
-textInput.addEventListener("input", updateEditorState);
+editorTextInput.addEventListener("input", updateEditorState);
 
-clearButton.addEventListener("click", () => {
-  textInput.value = "";
-  textInput.focus();
+editorClearButton.addEventListener("click", () => {
+  editorTextInput.value = "";
+  editorTextInput.focus();
   updateEditorState();
 });
 
-form.addEventListener("submit", async (event) => {
+editorForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const text = textInput.value;
+  const text = editorTextInput.value;
   if (!text.trim()) {
     updateEditorState();
-    textInput.focus();
+    editorTextInput.focus();
     return;
   }
 
   const extracted = extractDocumentParts(text);
   extracted.content = cleanContent(extracted.content);
   if (!extracted.title && !extracted.content) {
-    formStatus.textContent = "לא נמצא טקסט אחרי הסימונים. כדאי לבדוק את הטקסט ולנסות שוב.";
+    editorFormStatus.textContent = "לא נמצא טקסט אחרי הסימונים. כדאי לבדוק את הטקסט ולנסות שוב.";
     return;
   }
 
-  downloadButton.disabled = true;
-  downloadLabel.textContent = "מכינים את המסמך...";
-  formStatus.textContent = "";
+  editorDownloadButton.disabled = true;
+  editorDownloadLabel.textContent = "מכינים את המסמך...";
+  editorFormStatus.textContent = "";
 
   try {
     const paragraphs = [
@@ -123,13 +132,14 @@ form.addEventListener("submit", async (event) => {
             new Paragraph({
               alignment: AlignmentType.RIGHT,
               bidirectional: true,
-              spacing: { after: 200 },
+              spacing: { after: 280, line: 360 },
               children: [
                 new TextRun({
                   text: extracted.title,
                   font: "Arial",
-                  size: 28,
+                  size: 36,
                   bold: true,
+                  color: "283858",
                   rightToLeft: true,
                 }),
               ],
@@ -143,11 +153,13 @@ form.addEventListener("submit", async (event) => {
             new Paragraph({
               alignment: AlignmentType.RIGHT,
               bidirectional: true,
+              spacing: { after: 160, line: 336 },
               children: [
                 new TextRun({
                   text: line || " ",
                   font: "Arial",
                   size: 24,
+                  color: "333333",
                   rightToLeft: true,
                 }),
               ],
@@ -172,18 +184,18 @@ form.addEventListener("submit", async (event) => {
     const url = URL.createObjectURL(blob);
     const link = window.document.createElement("a");
     link.href = url;
-    link.download = `${getSafeFileName(fileNameInput.value)}.docx`;
+    link.download = `${getSafeFileName(editorFileNameInput.value)}.docx`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    formStatus.textContent = extracted.usedFallback
+    editorFormStatus.textContent = extracted.usedFallback
       ? "לא נמצאו סימוני כותרת ותוכן; כל הטקסט נשמר כתוכן במסמך."
       : "המסמך מוכן וההורדה התחילה.";
   } catch (error) {
     console.error("Could not create the Word document.", error);
-    formStatus.textContent = "לא הצלחנו ליצור את המסמך. אפשר לנסות שוב.";
+    editorFormStatus.textContent = "לא הצלחנו ליצור את המסמך. אפשר לנסות שוב.";
   } finally {
-    downloadButton.disabled = textInput.value.trim().length === 0;
-    downloadLabel.textContent = "הורדת קובץ Word";
+    editorDownloadButton.disabled = editorTextInput.value.trim().length === 0;
+    editorDownloadLabel.textContent = "הורדת קובץ Word";
   }
 });
 
