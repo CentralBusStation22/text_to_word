@@ -40,7 +40,7 @@
             <textarea
               id="text-input"
               name="text"
-              placeholder="הדביקו את הטקסט כאן...&#10;&#10;כותרת: הכותרת שלכם&#10;תוכן: התוכן שלכם"
+              placeholder="הדביקו את הטקסט כאן...&#10;&#10;### הכותרת שלכם&#10;התוכן שלכם"
               spellcheck="false"
               dir="auto"
               required
@@ -51,15 +51,23 @@
               <button id="clear-button" class="text-button" type="button" disabled>ניקוי הטקסט</button>
             </div>
 
-            <div class="form-divider"></div>
+            <button id="preview-button" class="preview-button" type="button" disabled aria-expanded="false" aria-controls="document-preview">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M2.5 10s2.7-5 7.5-5 7.5 5 7.5 5-2.7 5-7.5 5-7.5-5-7.5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                <circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+              <span>תצוגה מקדימה</span>
+            </button>
 
-            <div class="file-name-row">
-              <label for="file-name">שם הקובץ</label>
-              <div class="file-name-input">
-                <input id="file-name" name="fileName" type="text" value="המסמך שלי" maxlength="80" />
-                <span>.docx</span>
+            <section id="document-preview" class="document-preview" aria-label="תצוגה מקדימה של המסמך" aria-live="polite" hidden>
+              <div class="preview-heading">
+                <span>תצוגה מקדימה</span>
+                <span class="preview-format">מסמך Word</span>
               </div>
-            </div>
+              <article id="preview-page" class="preview-page" dir="rtl"></article>
+            </section>
+
+            <div class="form-divider"></div>
 
             <button id="download-button" class="download-button" type="submit" disabled>
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">

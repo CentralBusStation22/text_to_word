@@ -266,6 +266,85 @@ textarea:focus,
   cursor: default;
 }
 
+.preview-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
+  color: #806944;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.preview-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.preview-button:disabled {
+  color: #b9b8b1;
+  cursor: default;
+}
+
+.document-preview {
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid #e8e5de;
+  border-radius: 10px;
+  background: #f7f6f2;
+}
+
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 15px;
+  border-bottom: 1px solid #e8e5de;
+  color: #686b63;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.preview-format {
+  color: #99998f;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.preview-page {
+  min-height: 120px;
+  margin: 15px;
+  padding: 28px;
+  border: 1px solid #ebe9e3;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(38, 43, 35, 0.04);
+  color: #333;
+  text-align: right;
+}
+
+.preview-page h3 {
+  margin: 0 0 18px;
+  color: #283858;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.preview-page p {
+  margin: 0 0 10px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .form-divider {
   height: 1px;
   margin: 13px 0 17px;
@@ -792,6 +871,11 @@ textarea:focus,
 
   .editor-card {
     padding: 22px;
+  }
+
+  .preview-page {
+    margin: 10px;
+    padding: 19px;
   }
 
   textarea {

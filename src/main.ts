@@ -3,9 +3,11 @@ import "./style.css";
 
 const form = document.querySelector<HTMLFormElement>("#document-form");
 const textInput = document.querySelector<HTMLTextAreaElement>("#text-input");
-const fileNameInput = document.querySelector<HTMLInputElement>("#file-name");
 const stats = document.querySelector<HTMLElement>("#text-stats");
 const clearButton = document.querySelector<HTMLButtonElement>("#clear-button");
+const previewButton = document.querySelector<HTMLButtonElement>("#preview-button");
+const previewPanel = document.querySelector<HTMLElement>("#document-preview");
+const previewPage = document.querySelector<HTMLElement>("#preview-page");
 const downloadButton = document.querySelector<HTMLButtonElement>("#download-button");
 const downloadLabel = downloadButton?.querySelector<HTMLElement>(".download-label");
 const formStatus = document.querySelector<HTMLElement>("#form-status");
@@ -13,9 +15,11 @@ const formStatus = document.querySelector<HTMLElement>("#form-status");
 if (
   !form ||
   !textInput ||
-  !fileNameInput ||
   !stats ||
   !clearButton ||
+  !previewButton ||
+  !previewPanel ||
+  !previewPage ||
   !downloadButton ||
   !downloadLabel ||
   !formStatus
@@ -25,9 +29,11 @@ if (
 
 const editorForm = form;
 const editorTextInput = textInput;
-const editorFileNameInput = fileNameInput;
 const editorStats = stats;
 const editorClearButton = clearButton;
+const editorPreviewButton = previewButton;
+const editorPreviewPanel = previewPanel;
+const editorPreviewPage = previewPage;
 const editorDownloadButton = downloadButton;
 const editorDownloadLabel = downloadLabel;
 const editorFormStatus = formStatus;
@@ -39,8 +45,13 @@ function updateEditorState(): void {
 
   editorStats.textContent = `${words} ${words === 1 ? "מילה" : "מילים"} · ${characters} תווים`;
   editorClearButton.disabled = text.length === 0;
+  editorPreviewButton.disabled = text.trim().length === 0;
   editorDownloadButton.disabled = text.trim().length === 0;
   editorFormStatus.textContent = "";
+
+  if (!editorPreviewPanel.hidden) {
+    renderDocumentPreview();
+  }
 }
 
 function getSafeFileName(value: string): string {
@@ -67,6 +78,25 @@ function extractDocumentParts(text: string): ExtractedDocument {
   const contentMarkerIndex = text.indexOf(contentMarker);
 
   if (titleMarkerIndex === -1 && contentMarkerIndex === -1) {
+    const lines = text.split(/\r\n|\r|\n/u);
+    const headingIndex = lines.findIndex((line) =>
+      /^\s{0,3}#{1,6}\s+\S/u.test(line),
+    );
+
+    if (headingIndex !== -1) {
+      const heading = lines[headingIndex].match(
+        /^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/u,
+      );
+
+      if (heading) {
+        return {
+          title: heading[1].trim(),
+          content: lines.slice(headingIndex + 1).join("\n").trim(),
+          usedFallback: false,
+        };
+      }
+    }
+
     return { title: "", content: text.trim(), usedFallback: true };
   }
 
@@ -93,7 +123,29 @@ function extractDocumentParts(text: string): ExtractedDocument {
 }
 
 function cleanContent(content: string): string {
-  return content.replace(/@\d+/gu, "");
+  return content.replace(/@\d+/gu, "").replace(/\s+([.,!?;:…])/gu, "$1");
+}
+
+function getCleanedDocumentParts(text: string): ExtractedDocument {
+  const extracted = extractDocumentParts(text);
+  return { ...extracted, content: cleanContent(extracted.content) };
+}
+
+function renderDocumentPreview(): void {
+  const extracted = getCleanedDocumentParts(editorTextInput.value);
+  editorPreviewPage.replaceChildren();
+
+  if (extracted.title) {
+    const title = window.document.createElement("h3");
+    title.textContent = extracted.title;
+    editorPreviewPage.append(title);
+  }
+
+  for (const line of extracted.content.split(/\r\n|\r|\n/u)) {
+    const paragraph = window.document.createElement("p");
+    paragraph.textContent = line || "\u00a0";
+    editorPreviewPage.append(paragraph);
+  }
 }
 
 editorTextInput.addEventListener("input", updateEditorState);
@@ -102,6 +154,19 @@ editorClearButton.addEventListener("click", () => {
   editorTextInput.value = "";
   editorTextInput.focus();
   updateEditorState();
+});
+
+editorPreviewButton.addEventListener("click", () => {
+  const isOpening = editorPreviewPanel.hidden;
+  editorPreviewPanel.hidden = !isOpening;
+  editorPreviewButton.setAttribute("aria-expanded", String(isOpening));
+  editorPreviewButton.querySelector("span")!.textContent = isOpening
+    ? "סגירת תצוגה מקדימה"
+    : "תצוגה מקדימה";
+
+  if (isOpening) {
+    renderDocumentPreview();
+  }
 });
 
 editorForm.addEventListener("submit", async (event) => {
@@ -114,8 +179,7 @@ editorForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const extracted = extractDocumentParts(text);
-  extracted.content = cleanContent(extracted.content);
+  const extracted = getCleanedDocumentParts(text);
   if (!extracted.title && !extracted.content) {
     editorFormStatus.textContent = "לא נמצא טקסט אחרי הסימונים. כדאי לבדוק את הטקסט ולנסות שוב.";
     return;
@@ -184,7 +248,7 @@ editorForm.addEventListener("submit", async (event) => {
     const url = URL.createObjectURL(blob);
     const link = window.document.createElement("a");
     link.href = url;
-    link.download = `${getSafeFileName(editorFileNameInput.value)}.docx`;
+    link.download = `${getSafeFileName(extracted.title)}.docx`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     editorFormStatus.textContent = extracted.usedFallback
